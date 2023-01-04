@@ -14,9 +14,9 @@ class MessagesScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: (){
-            Navigator.of(context).pop();
+            Navigator.pop(context);
           },
         ),
         title: Row(
