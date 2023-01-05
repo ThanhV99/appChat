@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../chats/chats_screen.dart';
 import '../signup/signup_screen.dart';
 import 'Widget/bezierContainer.dart';
@@ -23,18 +24,22 @@ class _LoginScreenState extends State<LoginScreen> {
               Positioned(
                 top: 40,
                 left: 0,
-                child: Container(
-                  child: TextButton.icon(
-                    onPressed: (){
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.keyboard_arrow_left),
-                    label: const Text(
-                      "Quay lại",
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                      ),
+                child: InkWell(
+                  onTap: (){
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    child: Row(
+                      children: [
+                        Icon(Icons.keyboard_arrow_left),
+                        Text(
+                          "Quay lại",
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 )
@@ -120,6 +125,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   style: const TextStyle(
                                     fontSize: 20,
                                   ),
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                                   textAlign: TextAlign.start,
                                   obscureText: false,
                                   decoration: InputDecoration(
@@ -279,17 +286,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       )
-      // body: Column(
-      //   children: [
-      //     Text("Login"),
-      //     ElevatedButton(
-      //       onPressed: (){
-      //         Navigator.push(context, MaterialPageRoute(builder: (context) => ChatsScreen()));
-      //       },
-      //       child: Text("LOGIN"),
-      //     )
-      //   ],
-      // )
     );
   }
 }
