@@ -1,3 +1,4 @@
+import 'package:appchat/helper/helper_function.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../chats/chats_screen.dart';
@@ -12,6 +13,23 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  bool _isSignedIn = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUserLoggedInStatus();
+  }
+
+  getUserLoggedInStatus() async{
+    await HelperFunctions.getUserLoggedInStatus().then((value) {
+      if (value!=null){
+        _isSignedIn = value;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -206,7 +224,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         child: InkWell(
                           onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => ChatsScreen()));
+                            if (_isSignedIn){
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => ChatsScreen()));
+                            }
                           },
                           child: const Text(
                             'Đăng nhập',
