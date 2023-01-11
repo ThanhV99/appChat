@@ -1,4 +1,5 @@
 import 'package:appchat/helper/helper_function.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../chats/chats_screen.dart';
@@ -14,6 +15,9 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _isSignedIn = false;
+  final formKey = GlobalKey<FormState>();
+  String? phone;
+  String? password;
 
   @override
   void initState() {
@@ -28,6 +32,15 @@ class _LoginScreenState extends State<LoginScreen> {
         _isSignedIn = value;
       }
     });
+  }
+
+  void validateAndSave(){
+    final FormState? form = formKey.currentState;
+    if(form!.validate()){
+      if(_isSignedIn){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => ChatsScreen()));
+      }
+    }
   }
 
   @override
@@ -48,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   child: Container(
                     child: Row(
-                      children: [
+                      children: const [
                         Icon(Icons.keyboard_arrow_left),
                         Text(
                           "Quay lại",
@@ -117,117 +130,112 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      Column(
-                        children: <Widget>[
-                          const SizedBox(
-                            height: 80,
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(
-                              vertical: 10,
+                      Form(
+                        key: formKey,
+                        child: Column(
+                          children: <Widget>[
+                            const SizedBox(
+                              height: 80,
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                const Text(
-                                  "Số điện thoại",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                TextField(
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                  ),
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                                  textAlign: TextAlign.start,
-                                  obscureText: false,
-                                  decoration: InputDecoration(
-                                    suffixIcon: const Icon(
-                                      Icons.phone_android,
-                                      color: Colors.black54,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(15),
+                            Container(
+                              margin: const EdgeInsets.symmetric(
+                                vertical: 10,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  const Text(
+                                    "Số điện thoại",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.symmetric(vertical: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                const Text(
-                                  "Mật khẩu",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
+                                  const SizedBox(
+                                    height: 10,
                                   ),
-                                ),
-                                const SizedBox(height: 10),
-                                TextField(
-                                  obscureText: true,
-                                  decoration: InputDecoration(
-                                    suffixIcon: const Icon(
-                                      Icons.visibility,
-                                      color: Colors.black54,
+                                  TextFormField(
+                                    style: const TextStyle(
+                                      fontSize: 20,
                                     ),
-                                    // icon: Icon(Icons.lock),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        15,
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
+                                    textAlign: TextAlign.start,
+                                    obscureText: false,
+                                    onChanged: (val){
+                                      setState(() {
+                                        phone = val;
+                                      });
+                                    },
+                                    validator: (val){
+                                      return (val!.isNotEmpty) ? null : "Không được để trống số điện thoại";
+                                    },
+                                    decoration: InputDecoration(
+                                      suffixIcon: const Icon(
+                                        Icons.phone_android,
+                                        color: Colors.black54,
+                                      ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(15),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                            Container(
+                              margin: const EdgeInsets.symmetric(vertical: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  const Text(
+                                    "Mật khẩu",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  TextFormField(
+                                    obscureText: true,
+                                    onChanged: (val){
+                                      setState(() {
+                                        password = val;
+                                      });
+                                    },
+                                    validator: (val){
+                                      return (val!.length < 6) ? "Mật khẩu phải có ít nhất 6 kí tự" : null;
+                                    },
+                                    decoration: InputDecoration(
+                                      suffixIcon: const Icon(
+                                        Icons.visibility,
+                                        color: Colors.black54,
+                                      ),
+                                      // icon: Icon(Icons.lock),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          15,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       const SizedBox(height: 20),
-                      Container(
-                        width: MediaQuery.of(
-                          context,
-                        ).size.width,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 15,
-                        ),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(15),
-                          ),
-                          boxShadow: <BoxShadow>[
-                            BoxShadow(
-                                color: Colors.grey.shade200,
-                                offset: const Offset(2, 4),
-                                blurRadius: 5,
-                                spreadRadius: 2),
-                          ],
-                          gradient: const LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [
-                              Colors.blue,
-                              Colors.lightBlue,
-                            ],
-                          ),
-                        ),
-                        child: InkWell(
-                          onTap: () {
-                            if (_isSignedIn){
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => ChatsScreen()));
-                            }
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: (){
+                            validateAndSave();
                           },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            elevation: 3,
+                          ),
                           child: const Text(
                             'Đăng nhập',
                             style: TextStyle(
@@ -258,46 +266,27 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SignUpScreen(),
+                      Text.rich(TextSpan(
+                        text: "Chưa có tài khoản? ",
+                        style: TextStyle(color: Colors.black, fontSize: 14),
+                        children: [
+                          TextSpan(
+                            text: "Đăng ký",
+                            style: TextStyle(
+                              color: Theme.of(context).primaryColor,
+                              fontWeight: FontWeight.w500
                             ),
-                          );
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 20),
-                          // padding: const EdgeInsets.all(15),
-                          alignment: Alignment.bottomCenter,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: const <Widget>[
-                              Text(
-                                "Chưa có tài khoản ?",
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
+                            recognizer: TapGestureRecognizer()..onTap = (){
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SignUpScreen(),
                                 ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text(
-                                'Đăng kí',
-                                style: TextStyle(
-                                  color: Color(
-                                    0xFF0389F6,
-                                  ),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                              );
+                            }
+                          )
+                        ]
+                      ))
                     ],
                   ),
                 ),
