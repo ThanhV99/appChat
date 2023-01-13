@@ -22,8 +22,8 @@ class BezierContainer extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Theme.of(context).colorScheme.background,
-                  Theme.of(context).colorScheme.onBackground
+                  Theme.of(context).colorScheme.onPrimary,
+                  Theme.of(context).colorScheme.primary
                   // Colors.blue,
                   // Colors.lightBlue,
                 ],

@@ -16,7 +16,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool _isSignedIn = false;
   final formKey = GlobalKey<FormState>();
-  String? phone;
+  String? email;
   String? password;
 
   @override
@@ -145,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   const Text(
-                                    "Số điện thoại",
+                                    "Email",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 15,
@@ -158,21 +158,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                     style: const TextStyle(
                                       fontSize: 20,
                                     ),
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
                                     textAlign: TextAlign.start,
                                     obscureText: false,
                                     onChanged: (val){
                                       setState(() {
-                                        phone = val;
+                                        email = val;
                                       });
                                     },
                                     validator: (val){
-                                      return (val!.isNotEmpty) ? null : "Không được để trống số điện thoại";
+                                      return (val!.isNotEmpty) ? null : "Không được để email";
                                     },
                                     decoration: InputDecoration(
                                       suffixIcon: const Icon(
-                                        Icons.phone_android,
+                                        Icons.email_outlined,
                                         color: Colors.black54,
                                       ),
                                       border: OutlineInputBorder(

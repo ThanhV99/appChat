@@ -1,9 +1,11 @@
 import 'package:appchat/screens/login/login_screen.dart';
+import 'package:appchat/service/auth_service.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'Widget/bezierContainer.dart';
 import '../chats/chats_screen.dart';
+import 'Widget/snackBar.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -13,15 +15,35 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  bool _isloading = false;
   final formKey = GlobalKey<FormState>();
-  String fullname = "";
-  String phone = "";
+  String fullName = "";
+  String email = "";
   String password = "";
+  AuthService authService = AuthService();
 
-  void validateAndSave(){
-    final FormState? form = formKey.currentState;
-    if(form!.validate()){
-      Navigator.push(context, MaterialPageRoute(builder: (context) => ChatsScreen()));
+  // void validateAndSave(){
+  //   final FormState? form = formKey.currentState;
+  //   if(form!.validate()){
+  //     // Navigator.push(context, MaterialPageRoute(builder: (context) => ChatsScreen()));
+  //   }
+  // }
+
+  register() async {
+    if(formKey.currentState!.validate()){
+      setState(() {
+        _isloading = true;
+      });
+      await authService.registerUserWithEmailAndPassword(fullName, email, password).then((value){
+        if (value == true){
+          // saving the shared preference state
+        } else {
+          showSnackBar(context, value, Colors.red);
+          setState(() {
+            _isloading = false;
+          });
+        }
+      });
     }
   }
 
@@ -62,194 +84,194 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 right: -MediaQuery.of(context).size.width * .4,
                 child: BezierContainer(),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: SingleChildScrollView(
-                  child: Form(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(height: size.height * .2),
-                        const SizedBox(height: 20),
-                        Column(
-                            children: <Widget>[
-                              const SizedBox(height: 80),
-                              Container(
-                                margin: const EdgeInsets.symmetric(
-                                  vertical: 10,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    const Text(
-                                      "Tên hiển thị",
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    TextFormField(
-                                      onChanged: (val){
-                                        setState(() {
-                                          fullname = val;
-                                        });
-                                      },
-                                      validator: (val){
-                                        return (val!.isEmpty) ? "Tên không được để trống" : null;
-                                      },
-                                      obscureText: false,
-                                      decoration: InputDecoration(
-                                        suffixIcon: const Icon(Icons.person_outlined),
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(15),
+              _isloading ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor)) :
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: SingleChildScrollView(
+                    child: Form(
+                      key: formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(height: size.height * .2),
+                          const SizedBox(height: 20),
+                          Column(
+                              children: <Widget>[
+                                const SizedBox(height: 80),
+                                Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      const Text(
+                                        "Tên hiển thị",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ]
-                        ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(
-                            vertical: 10,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const Text(
-                                "Số điện thoại",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              TextFormField(
-                                onChanged: (val){
-                                  setState(() {
-                                    phone = val;
-                                  });
-                                },
-                                validator: (val){
-                                  return (val!.isEmpty) ? "Số điện thoại không được để trống" : null;
-                                },
-                                keyboardType: TextInputType.number,
-                                inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly],
-                                textAlign: TextAlign.start,
-                                obscureText: false,
-                                decoration: InputDecoration(
-                                  suffixIcon: const Icon(
-                                    Icons.phone_android,
-                                    color: Colors.black54,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const Text(
-                                "Mật khẩu",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              TextFormField(
-                                obscureText: true,
-                                onChanged: (val){
-                                  setState(() {
-                                    password = val;
-                                  });
-                                },
-                                validator: (val){
-                                  return (val!.length < 6) ? "Mật khẩu phải có ít nhất 6 kí tự" : null;
-                                },
-                                decoration: InputDecoration(
-                                  suffixIcon: const Icon(
-                                    Icons.visibility,
-                                    color: Colors.black54,
-                                  ),
-                                  // icon: Icon(Icons.lock),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      15,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  onPressed: (){
-                                    validateAndSave();
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Theme.of(context).primaryColor,
-                                    elevation: 3,
-                                  ),
-                                  child: const Text(
-                                    'Đăng Ký',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.symmetric(vertical: 10),
-                                child: const Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 10),
-                                  child: Divider(
-                                    thickness: 1,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              Container(
-                                alignment: Alignment.center,
-                                child: Text.rich(TextSpan(
-                                    text: "Đã có tài khoản? ",
-                                    style: TextStyle(color: Colors.black, fontSize: 14),
-                                    children: [
-                                      TextSpan(
-                                          text: "Đăng nhập ngay",
-                                          style: TextStyle(
-                                              color: Theme.of(context).primaryColor,
-                                              fontWeight: FontWeight.w500
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      TextFormField(
+                                        onChanged: (val){
+                                          setState(() {
+                                            fullName = val;
+                                          });
+                                        },
+                                        validator: (val){
+                                          return (val!.isEmpty) ? "Tên không được để trống" : null;
+                                        },
+                                        obscureText: false,
+                                        decoration: InputDecoration(
+                                          suffixIcon: const Icon(Icons.person_outlined),
+                                          border: OutlineInputBorder(
+                                            borderRadius: BorderRadius.circular(15),
                                           ),
-                                          recognizer: TapGestureRecognizer()..onTap = (){
-                                            Navigator.pop(context);
-                                          }
-                                      )
-                                    ]
-                                )),
-                              )
-                            ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ]
                           ),
-                        ),
-                      ],
-                    ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(
+                              vertical: 10,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const Text(
+                                  "Số điện thoại",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                TextFormField(
+                                  onChanged: (val){
+                                    setState(() {
+                                      email = val;
+                                    });
+                                  },
+                                  validator: (val){
+                                    return (val!.isEmpty) ? "Email không được để trống" : null;
+                                  },
+                                  textAlign: TextAlign.start,
+                                  obscureText: false,
+                                  decoration: InputDecoration(
+                                    suffixIcon: const Icon(
+                                      Icons.email_outlined,
+                                      color: Colors.black54,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const Text(
+                                  "Mật khẩu",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                TextFormField(
+                                  obscureText: true,
+                                  onChanged: (val){
+                                    setState(() {
+                                      password = val;
+                                    });
+                                  },
+                                  validator: (val){
+                                    return (val!.length < 6) ? "Mật khẩu phải có ít nhất 6 kí tự" : null;
+                                  },
+                                  decoration: InputDecoration(
+                                    suffixIcon: const Icon(
+                                      Icons.visibility,
+                                      color: Colors.black54,
+                                    ),
+                                    // icon: Icon(Icons.lock),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        15,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: (){
+                                      register();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Theme.of(context).primaryColor,
+                                      elevation: 3,
+                                    ),
+                                    child: const Text(
+                                      'Đăng Ký',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  margin: const EdgeInsets.symmetric(vertical: 10),
+                                  child: const Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 10),
+                                    child: Divider(
+                                      thickness: 1,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                Container(
+                                  alignment: Alignment.center,
+                                  child: Text.rich(TextSpan(
+                                      text: "Đã có tài khoản? ",
+                                      style: TextStyle(color: Colors.black, fontSize: 14),
+                                      children: [
+                                        TextSpan(
+                                            text: "Đăng nhập ngay",
+                                            style: TextStyle(
+                                                color: Theme.of(context).primaryColor,
+                                                fontWeight: FontWeight.w500
+                                            ),
+                                            recognizer: TapGestureRecognizer()..onTap = (){
+                                              Navigator.pop(context);
+                                            }
+                                        )
+                                      ]
+                                  )),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
                   )
                 )
-              )
             ],
           ),
         ),
