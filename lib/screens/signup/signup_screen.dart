@@ -22,13 +22,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String password = "";
   AuthService authService = AuthService();
 
-  // void validateAndSave(){
-  //   final FormState? form = formKey.currentState;
-  //   if(form!.validate()){
-  //     // Navigator.push(context, MaterialPageRoute(builder: (context) => ChatsScreen()));
-  //   }
-  // }
-
   register() async {
     if(formKey.currentState!.validate()){
       setState(() {
