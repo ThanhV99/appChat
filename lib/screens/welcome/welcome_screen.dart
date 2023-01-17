@@ -1,8 +1,35 @@
+import 'package:appchat/helper/helper_function.dart';
+import 'package:appchat/screens/chats/chats_screen.dart';
 import 'package:flutter/material.dart';
 import '../loginOrSignUp/login_signup.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  bool _isSignedIn = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print("this is initstate screen welcome");
+    getUserLoggedInStatus();
+  }
+
+  getUserLoggedInStatus() async {
+    await HelperFunctions.getUserLoggedInStatus().then((value){
+      if(value!=null){
+        setState(() {
+          _isSignedIn = value;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,14 +49,19 @@ class WelcomeScreen extends StatelessWidget {
               FittedBox(
                 child: TextButton(
                   onPressed: (){
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginOrSignUpScreen()));
+                    if (_isSignedIn) {
+                      Navigator.pushReplacement(context, MaterialPageRoute(
+                          builder: (context) => const ChatsScreen()));
+                    }else{
+                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginOrSignUpScreen()));
+                    }
                   },
                   child: Row(
                     children: [
                       Text(
                         "Skip",
                         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.8)
+                            color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.8)
                         ),
                       ),
                       const SizedBox(width: 10),

@@ -1,3 +1,4 @@
+import 'package:appchat/helper/helper_function.dart';
 import 'package:appchat/screens/login/login_screen.dart';
 import 'package:appchat/service/auth_service.dart';
 import 'package:flutter/gestures.dart';
@@ -27,9 +28,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
       setState(() {
         _isloading = true;
       });
-      await authService.registerUserWithEmailAndPassword(fullName, email, password).then((value){
+      await authService.registerUserWithEmailAndPassword(fullName, email, password).then((value) async{
         if (value == true){
           // saving the shared preference state
+          await HelperFunctions.saveUserLoggedInStatus(true);
+          await HelperFunctions.saveUserNameSF(fullName);
+          await HelperFunctions.saveUserEmailSF(email);
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ChatsScreen()));
         } else {
           showSnackBar(context, value, Colors.red);
           setState(() {
@@ -139,7 +144,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 const Text(
-                                  "Số điện thoại",
+                                  "Email",
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 15,
