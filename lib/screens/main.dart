@@ -1,5 +1,5 @@
 import '../responsive.dart';
-import 'welcome/welcome_screen.dart';
+import 'welcome/view.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {

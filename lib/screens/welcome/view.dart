@@ -1,44 +1,17 @@
-import 'package:appchat/helper/helper_function.dart';
-import 'package:appchat/screens/chats/chats_screen.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
-import '../loginOrSignUp/login_signup.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({Key? key}) : super(key: key);
+import 'package:get/get.dart';
+import 'controller.dart';
 
-  @override
-  State<WelcomeScreen> createState() => _WelcomeScreenState();
-}
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
-  int index_page = 0;
-  bool _isSignedIn = false;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    print("this is initstate screen welcome");
-    getUserLoggedInStatus();
-  }
-
-  getUserLoggedInStatus() async {
-    await HelperFunctions.getUserLoggedInStatus().then((value){
-      if(value!=null){
-        setState(() {
-          _isSignedIn = value;
-        });
-      }
-    });
-  }
-
+class WelcomeScreen extends GetView<WelcomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SizedBox(
+        child: Obx(() => SizedBox(
           width: 360.w,
           height: 720.h,
           child: Stack(
@@ -48,9 +21,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 scrollDirection: Axis.horizontal,
                 reverse: false,
                 onPageChanged: (index){
-                  setState(() {
-                    index_page = index;
-                  });
+                  controller.changePage(index);
                 },
                 controller: PageController(
                     initialPage: 0, keepPage: false, viewportFraction: 1
@@ -93,11 +64,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           child: FittedBox(
                             child: TextButton(
                               onPressed: (){
-                                if (_isSignedIn) {
-                                  Navigator.pushReplacement(context, MaterialPageRoute(
-                                      builder: (context) => const ChatsScreen()));
+                                if (controller.state.isSignedIn.value) {
+                                  controller.handleChats();
                                 }else{
-                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginOrSignUpScreen()));
+                                  controller.handleLogin();
                                 }
                               },
                               child: Row(
@@ -127,7 +97,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               Positioned(
                 bottom: 90,
                 child: DotsIndicator(
-                  position: index_page.toDouble(),
+                  position: controller.state.index.value.toDouble(),
                   dotsCount: 3,
                   reversed: false,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -135,55 +105,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     size: const Size.square(9),
                     activeSize: const Size(18, 9),
                     activeShape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5)
+                        borderRadius: BorderRadius.circular(5)
                     )
                   ),
                 ),
               )
             ],
           ),
-        )
-          // child: Column(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   children: [
-          //     const Spacer(flex: 2),
-          //     Image.asset("assets/images/welcome_image.png"),
-          //     Text(
-          //       "Welcome to our freedom \nmessage app",
-          //       textAlign: TextAlign.center,
-          //       style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.bold),
-          //     ),
-          //     const Spacer(),
-          //     FittedBox(
-          //       child: TextButton(
-          //         onPressed: (){
-          //           if (_isSignedIn) {
-          //             Navigator.pushReplacement(context, MaterialPageRoute(
-          //                 builder: (context) => const ChatsScreen()));
-          //           }else{
-          //             Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginOrSignUpScreen()));
-          //           }
-          //         },
-          //         child: Row(
-          //           children: [
-          //             Text(
-          //               "Skip",
-          //               style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-          //                   color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.8)
-          //               ),
-          //             ),
-          //             const SizedBox(width: 10),
-          //             Icon(
-          //               Icons.arrow_forward,
-          //               size: 16,
-          //               color: Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.8),
-          //             )
-          //           ],
-          //         ),
-          //       ),
-          //     ),
-          //   ],
-          // )
+        ))
       ),
     );
   }

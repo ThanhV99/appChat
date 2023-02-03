@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'Widget/bezierContainer.dart';
 import '../chats/chats_screen.dart';
-import 'Widget/snackBar.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -36,7 +35,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           await HelperFunctions.saveUserEmailSF(email);
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ChatsScreen()));
         } else {
-          showSnackBar(context, value, Colors.red);
+          // showSnackBar(context, value, Colors.red);
           setState(() {
             _isloading = false;
           });

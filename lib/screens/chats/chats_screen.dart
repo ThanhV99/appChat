@@ -49,25 +49,6 @@ class _ChatsScreenState extends State<ChatsScreen> {
     });
   }
 
-  groupList(){
-    return StreamBuilder(
-      stream: groups,
-      builder: (context, snapshot){
-        if (snapshot.hasData){
-          if(snapshot.data['group'] != null){
-            if(snapshot.data['group'].length != 0){
-              return Text("sdfg");
-            }
-          }
-        }else{
-          return Center(
-            child: CircularProgressIndicator(color: Theme.of(context).primaryColor),
-          );
-        }
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -144,46 +125,101 @@ class _ChatsScreenState extends State<ChatsScreen> {
           ],
         ),
       ),
-      body: Material(
-        child: Column(
-          children: [
-            Form(
-              key: formKey,
-              child: Padding(
-                padding: const EdgeInsets.all(15),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    suffixIcon: const Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Icon(Icons.search),
-                    ),
-                    hintText: "SEARCH"
-                  ),
-                  onSaved: (value){
-                    search = value!;
-                  },
-                ),
-              ),
+      body: groupList(),
+      // body: Material(
+      //   child: Column(
+      //     children: [
+      //       Form(
+      //         key: formKey,
+      //         child: Padding(
+      //           padding: const EdgeInsets.all(15),
+      //           child: TextFormField(
+      //             decoration: InputDecoration(
+      //               border: OutlineInputBorder(
+      //                 borderRadius: BorderRadius.circular(30),
+      //               ),
+      //               suffixIcon: const Padding(
+      //                 padding: EdgeInsets.all(5),
+      //                 child: Icon(Icons.search),
+      //               ),
+      //               hintText: "SEARCH"
+      //             ),
+      //             onSaved: (value){
+      //               search = value!;
+      //             },
+      //           ),
+      //         ),
+      //       ),
+      //       const SizedBox(height: 10,),
+      //       Expanded(
+      //         child: ListView.builder(
+      //           itemCount: chatsData.length,
+      //           itemBuilder: (context, index){
+      //             return ChatCard(
+      //               chat: chatsData[index],
+      //               press: (){
+      //                 Navigator.push(context, MaterialPageRoute(builder: (context) => MessagesScreen(chat: chatsData[index])));
+      //               },
+      //             );
+      //           },
+      //         ),
+      //       )
+      //     ],
+      //   ),
+      // ),
+    );
+  }
+
+  groupList(){
+    return StreamBuilder(
+      stream: groups,
+      builder: (context, AsyncSnapshot snapshot){
+        if (snapshot.hasData){
+          if(snapshot.data['groups'] != null){
+            if(snapshot.data['groups'].length != 0){
+              return Text("sdfg");
+            } else{
+              return noGroupWidget();
+            }
+          } else{
+            return noGroupWidget();
+          }
+        }else{
+          return Center(
+            child: CircularProgressIndicator(color: Theme.of(context).primaryColor),
+          );
+        }
+      },
+    );
+  }
+
+  popUpDialog(BuildContext context){}
+
+  noGroupWidget() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onTap: () {
+              popUpDialog(context);
+            },
+            child: Icon(
+              Icons.add_circle,
+              color: Colors.grey[700],
+              size: 75,
             ),
-            const SizedBox(height: 10,),
-            Expanded(
-              child: ListView.builder(
-                itemCount: chatsData.length,
-                itemBuilder: (context, index){
-                  return ChatCard(
-                    chat: chatsData[index],
-                    press: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => MessagesScreen(chat: chatsData[index])));
-                    },
-                  );
-                },
-              ),
-            )
-          ],
-        ),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          const Text(
+            "You've not joined any groups, tap on the add icon to create a group or also search from top search button.",
+            textAlign: TextAlign.center,
+          )
+        ],
       ),
     );
   }
