@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../helper/helper_function.dart';
 import '../../service/auth_service.dart';
+import '../../service/database_service.dart';
 
 class SignupController extends GetxController{
   var isloading = false.obs;

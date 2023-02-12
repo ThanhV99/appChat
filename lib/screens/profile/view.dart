@@ -1,125 +1,90 @@
-import 'package:appchat/screens/chats/chats_screen.dart';
-import 'package:appchat/service/auth_service.dart';
+import 'package:appchat/screens/profile/controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../login/login_screen.dart';
-
-class ProfileScreen extends StatefulWidget {
-  String userName;
-  String email;
-  ProfileScreen({Key? key, required this.userName, required this.email}) : super(key: key);
-
-  @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
-}
-
-class _ProfileScreenState extends State<ProfileScreen> {
-  AuthService authService = AuthService();
+class ProfileScreen extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: Text("Thông tin"),
-        centerTitle: true,
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.symmetric(vertical: 50),
-          children: [
-            Icon(
-              Icons.account_circle,
-              size: 150,
-              color: Colors.grey[700],
-            ),
-            const SizedBox(height: 15,),
-            Text(
-              widget.userName,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 15,),
-            const Divider(height: 2,),
-            ListTile(
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (_) => ChatsScreen()));
-              },
-              contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              leading: Icon(Icons.group),
-              title: Text("Nhóm"),
-            ),
-            ListTile(
-              onTap: (){},
-              selectedColor: Theme.of(context).primaryColor,
-              selected: true,
-              contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              leading: Icon(Icons.group),
-              title: Text("Thông tin"),
-            ),
-            ListTile(
-              onTap: () async{
-                showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (context){
-                      return AlertDialog(
-                        title: const Text("Thông báo"),
-                        content: const Text("Bạn chắc chắn thoát?"),
-                        actions: [
-                          IconButton(
-                              onPressed: (){
-                                Navigator.pop(context);
-                              },
-                              icon: const Icon(Icons.cancel, color: Colors.red)
-                          ),
-                          IconButton(
-                              onPressed: (){
-                                authService.signOut().whenComplete((){
-                                  Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
-                                });
-                              },
-                              icon: const Icon(Icons.done, color: Colors.green)
-                          )
-                        ],
-                      );
-                    }
-                );
-              },
-              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              leading: const Icon(Icons.exit_to_app),
-              title: const Text("Thoát"),
-            )
-          ],
-        ),
-      ),
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+      body: Padding(
+        padding: const EdgeInsets.all(10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Icon(
-              Icons.account_circle,
-              size: 200,
-            ),
-            SizedBox(height: 15,),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Tên hiển thị"),
-                Text(widget.userName)
+                Stack(
+                  children: [
+                    Container(
+                      width: size.width*0.4,
+                      height: size.height*0.2,
+                      child: Obx(() => ClipRRect(
+                        borderRadius: BorderRadius.circular(12.0),
+                        child: controller.state.profilePic == null ? Placeholder()
+                            : Image.network(
+                          "${controller.state.profilePic}",
+                          fit: BoxFit.contain,
+                        ),
+                      ))
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(0.0, 1.0), //(x,y)
+                              blurRadius: 6.0,
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          // iconSize: 20,
+                          onPressed: (){
+                            print("sua avatar");
+                          },
+                          icon: const Icon(Icons.camera_alt),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
-            Divider(height: 20,),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Email"),
-                Text(widget.email)
-              ],
-            )
+            const SizedBox(height: 10,),
+            Flexible(
+              child: Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Obx(() => Text(controller.state.fullName.value, style: const TextStyle(fontSize: 20.0))),
+                    const SizedBox(width: 10,),
+                    IconButton(
+                      // iconSize: 20,
+                      onPressed: (){
+                        print("sua ten");
+                      },
+                      icon: const Icon(Icons.create),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const Divider(),
+            ElevatedButton(
+              onPressed: (){
+                controller.handleLogOut();
+              },
+              child: Text("Thoát"))
           ],
         ),
-      ),
+      )
     );
   }
 }

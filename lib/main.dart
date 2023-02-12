@@ -1,7 +1,11 @@
 import 'package:appchat/screens/chats/bindings.dart';
 import 'package:appchat/screens/chats/view.dart';
+import 'package:appchat/screens/contact/view.dart';
+import 'package:appchat/screens/contact/bindings.dart';
 import 'package:appchat/screens/login/bindings.dart';
 import 'package:appchat/screens/login/view.dart';
+import 'package:appchat/screens/profile/bindings.dart';
+import 'package:appchat/screens/profile/view.dart';
 import 'package:appchat/screens/signup/bindings.dart';
 import 'package:appchat/screens/signup/view.dart';
 import 'package:appchat/screens/welcome/bindings.dart';
@@ -55,8 +59,20 @@ class MyApp extends StatelessWidget {
             page: () => ChatsScreen(),
             binding: ChatsBinding(),
           ),
+          GetPage(
+            name: "/contact",
+            page: () => ContactScreen(),
+            binding: ContactBinding(),
+          ),
+          GetPage(
+            name: "/profile",
+            page: () => ProfileScreen(),
+            binding: ProfileBinding(),
+          ),
         ],
       )
     );
   }
 }
+
+// Binding is only started by navigating to AddPage (get.toNamed, for example).

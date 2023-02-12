@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import '../signup/signup_screen.dart';
 import 'Widget/bezierContainer.dart';
 
 import 'controller.dart';
@@ -238,12 +237,7 @@ class LoginScreen extends GetView<LoginController> {
                                       fontWeight: FontWeight.w500
                                   ),
                                   recognizer: TapGestureRecognizer()..onTap = (){
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SignUpScreen(),
-                                      ),
-                                    );
+                                    controller.handleSignup();
                                   }
                               )
                             ]
